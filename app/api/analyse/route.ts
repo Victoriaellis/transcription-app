@@ -1,3 +1,4 @@
+import { MAX_CHARS } from "@/app/constants";
 import { analyseTranscript } from "@/lib/analysis";
 import { prisma } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
@@ -11,12 +12,18 @@ function cleanJsonString(str: string) {
 
 export async function POST(request: NextRequest) {
   try {
-    console.log("hiii");
     const { text } = await request.json();
 
     if (!text || text.length < 10) {
       return NextResponse.json(
         { error: "Text must be at least 10 characters" },
+        { status: 400 }
+      );
+    }
+
+    if (text.length > MAX_CHARS) {
+      return NextResponse.json(
+        { error: `Text exceeds maximum length of ${MAX_CHARS} characters` },
         { status: 400 }
       );
     }

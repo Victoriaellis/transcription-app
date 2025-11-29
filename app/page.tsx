@@ -5,10 +5,12 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { AnalysisResultType } from "./types";
 import { client } from "@/lib/api-client";
 import { AnalysisResultSection } from "./components/analysis-result-section";
+import { MAX_CHARS } from "./constants";
 
 export default function HomePage() {
   const [text, setText] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const isTextTooLong = text.length > MAX_CHARS;
 
   const analyseMutation = useMutation({
     mutationFn: async (text: string): Promise<AnalysisResultType> => {
@@ -141,9 +143,16 @@ export default function HomePage() {
                 className="w-full h-48 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
 
+              {isTextTooLong && (
+                <p className="text-red-500 text-sm">
+                  Text is too long. Please reduce to fewer than{" "}
+                  {MAX_CHARS.toLocaleString()} characters.
+                </p>
+              )}
+
               <button
                 onClick={handleAnalyseTranscriptClick}
-                disabled={!text || analyseMutation.isPending}
+                disabled={!text || analyseMutation.isPending || isTextTooLong}
                 className="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg 
                     hover:bg-blue-700 disabled:bg-blue-300 transition"
               >

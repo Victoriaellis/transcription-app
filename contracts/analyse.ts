@@ -8,7 +8,7 @@ export const analyseContract = c.router({
     method: "POST",
     path: "/api/analyse",
     body: z.object({
-      text: z.string().min(10),
+      text: z.string().min(10).max(10000, "Text is too long"),
     }),
     responses: {
       200: z.object({
