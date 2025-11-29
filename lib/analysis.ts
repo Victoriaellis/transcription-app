@@ -6,6 +6,7 @@ Extract the following from the meeting transcript:
 
 1. Action items (with description, owner, deadline)
 2. Key decisions
+3. Sentiment: one of "positive", "neutral", "negative", or "mixed"
 
 Return ONLY valid JSON.
 NO backticks.
@@ -18,6 +19,7 @@ Match this exact JSON format:
     { "description": "...", "owner": "...", "deadline": "..." }
   ],
   "decisions": ["...", "..."],
+  "sentiment": "..."
 }
 
 Transcript:

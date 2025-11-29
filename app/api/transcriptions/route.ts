@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   const transcriptions = await prisma.transcript.findMany({
+    take: 20,
     orderBy: {
       createdAt: "desc",
     },

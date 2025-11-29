@@ -22,6 +22,7 @@ export const analyseContract = c.router({
             })
           ),
           decisions: z.array(z.string()),
+          sentiment: z.string().optional(),
         }),
       }),
     },

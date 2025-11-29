@@ -10,21 +10,20 @@ function cleanJsonString(str: string) {
     .trim();
 }
 
+function errorResponse(message: string, status = 400) {
+  return NextResponse.json({ error: message }, { status });
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { text } = await request.json();
 
-    if (!text || text.length < 10) {
-      return NextResponse.json(
-        { error: "Text must be at least 10 characters" },
-        { status: 400 }
-      );
-    }
-
+    if (!text) return errorResponse("Text is required");
+    if (text.length < 10)
+      return errorResponse("Text must be at least 10 characters");
     if (text.length > MAX_CHARS) {
-      return NextResponse.json(
-        { error: `Text exceeds maximum length of ${MAX_CHARS} characters` },
-        { status: 400 }
+      return errorResponse(
+        `Text exceeds maximum length of ${MAX_CHARS} characters`
       );
     }
 
@@ -33,34 +32,31 @@ export async function POST(request: NextRequest) {
     });
 
     const llmResponse = await analyseTranscript(text);
-    const cleaned = cleanJsonString(llmResponse);
-    const parsed = JSON.parse(cleaned);
 
-    const actionItems = Array.isArray(parsed.actionItems)
-      ? parsed.actionItems
-      : [];
-    const decisions = Array.isArray(parsed.decisions) ? parsed.decisions : [];
+    let parsed;
+    try {
+      parsed = JSON.parse(cleanJsonString(llmResponse));
+    } catch {
+      return errorResponse("LLM returned invalid JSON", 500);
+    }
+
+    const { actionItems = [], decisions = [], sentiment = null } = parsed;
 
     await prisma.analysis.create({
       data: {
         transcriptId: transcript.id,
         actionItems,
         decisions,
+        sentiment,
       },
     });
 
     return NextResponse.json({
       transcriptId: transcript.id,
-      analysis: {
-        actionItems,
-        decisions,
-      },
+      analysis: { actionItems, decisions, sentiment },
     });
   } catch (error) {
     console.error("Analysis error:", error);
-    return NextResponse.json(
-      { error: "Failed to analyse transcript" },
-      { status: 500 }
-    );
+    return errorResponse("Failed to analyse transcript", 500);
   }
 }

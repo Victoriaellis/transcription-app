@@ -7,4 +7,5 @@ export type ActionType = {
 export type AnalysisResultType = {
   actionItems: ActionType[];
   decisions: string[];
+  sentiment?: string;
 };

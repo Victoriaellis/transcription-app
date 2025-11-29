@@ -6,6 +6,7 @@ import { AnalysisResultType } from "./types";
 import { client } from "@/lib/api-client";
 import { AnalysisResultSection } from "./components/analysis-result-section";
 import { MAX_CHARS } from "./constants";
+import { TranscriptionListSkeleton } from "./components/list-skeleton";
 
 export default function HomePage() {
   const [text, setText] = useState("");
@@ -61,22 +62,26 @@ export default function HomePage() {
   if (selectedId) {
     if (isLoadingTranscript) {
       return (
-        <main className="min-h-screen bg-gray-50 p-6 flex items-center justify-center">
-          <p className="text-gray-600">Loading transcript...</p>
+        <main className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-gray-500 text-lg animate-pulse">
+            Loading transcript…
+          </div>
         </main>
       );
     }
 
     if (!selectedTranscript || isTranscriptError) {
       return (
-        <main className="min-h-screen bg-gray-50 p-6 flex items-center justify-center">
+        <main className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center space-y-4">
-            <p className="text-red-600">Transcript not found</p>
+            <p className="text-red-600 font-semibold text-lg">
+              Transcript not found
+            </p>
             <button
               onClick={() => setSelectedId(null)}
-              className="text-blue-600 hover:underline"
+              className="text-blue-600 hover:underline cursor-pointer"
             >
-              ← Back to home
+              ← Back to all transcripts
             </button>
           </div>
         </main>
@@ -84,8 +89,8 @@ export default function HomePage() {
     }
 
     return (
-      <main className="min-h-screen bg-gray-50 p-6 flex flex-col items-center">
-        <div className="w-full max-w-3xl space-y-8">
+      <main className="min-h-screen bg-gray-50 p-8 flex justify-center">
+        <div className="w-full max-w-4xl space-y-10">
           <button
             onClick={() => setSelectedId(null)}
             className="text-blue-600 hover:underline flex items-center gap-2 cursor-pointer"
@@ -93,18 +98,20 @@ export default function HomePage() {
             ← Back to all transcripts
           </button>
 
-          <header className="text-center space-y-2">
-            <h1 className="text-3xl font-bold text-gray-800">
+          <header className="space-y-1">
+            <h1 className="text-3xl font-bold text-gray-900">
               Transcript Details
             </h1>
-            <p className="text-gray-600">
+            <p className="text-gray-500">
               {new Date(selectedTranscript.createdAt).toLocaleString()}
             </p>
           </header>
 
-          <section className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
-            <h3 className="font-semibold text-gray-800">Full Transcript</h3>
-            <p className="text-gray-700 whitespace-pre-wrap">
+          <section className="bg-white p-6 rounded-xl border shadow-sm hover:shadow-md transition">
+            <h3 className="text-lg font-semibold text-gray-800 mb-3">
+              Full Transcript
+            </h3>
+            <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
               {selectedTranscript.text}
             </p>
           </section>
@@ -116,36 +123,34 @@ export default function HomePage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 p-6 flex flex-col items-center">
-      <div className="w-full max-w-3xl space-y-8">
+    <main className="min-h-screen bg-gray-50 p-8 flex justify-center">
+      <div className="w-full max-w-4xl space-y-10">
         <header className="text-center space-y-2">
-          <h1 className="text-3xl font-bold text-gray-800">
+          <h1 className="text-4xl font-extrabold text-gray-900">
             Meeting Transcript Analysis
           </h1>
-          <p className="text-gray-600">
-            Input your meeting transcript below and get AI insights.
+          <p className="text-gray-600 text-lg">
+            Paste your meeting notes and get insights instantly.
           </p>
         </header>
 
-        <section className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
-          <label className="block text-sm font-semibold text-gray-700">
-            Meeting Transcript
+        <section className="bg-white p-6 rounded-xl border shadow-sm space-y-5 hover:shadow-md transition">
+          <label className="text-sm font-semibold text-gray-700">
+            Paste Transcript
           </label>
 
-          {analysisResult ? (
-            <p className="p-3 bg-gray-100 rounded-lg text-gray-700">{text}</p>
-          ) : (
+          {!analysisResult ? (
             <>
               <textarea
                 value={text}
                 onChange={(e) => setText(e.target.value)}
-                placeholder="Paste meeting notes or transcript here in plain text..."
-                className="w-full h-48 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Paste meeting notes here…"
+                className="w-full h-52 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-none transition resize-none text-gray-700"
               />
 
               {isTextTooLong && (
-                <p className="text-red-500 text-sm">
-                  Text is too long. Please reduce to fewer than{" "}
+                <p className="text-red-600 text-sm font-medium">
+                  Text is too long. Reduce to less than{" "}
                   {MAX_CHARS.toLocaleString()} characters.
                 </p>
               )}
@@ -153,32 +158,39 @@ export default function HomePage() {
               <button
                 onClick={handleAnalyseTranscriptClick}
                 disabled={!text || analyseMutation.isPending || isTextTooLong}
-                className="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg 
-                    hover:bg-blue-700 disabled:bg-blue-300 transition"
+                className="w-full py-3 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 transition text-lg cursor-pointer"
               >
                 {analyseMutation.isPending
-                  ? "Analysing..."
+                  ? "Analysing…"
                   : "Analyse Transcript"}
               </button>
             </>
+          ) : (
+            <p className="p-3 bg-gray-100 rounded-lg text-gray-700 whitespace-pre-wrap">
+              {text}
+            </p>
           )}
 
           {analyseMutation.isError && (
-            <p className="text-red-500 text-sm">
+            <p className="text-red-600 text-sm">
               Something went wrong. Try again.
             </p>
           )}
         </section>
 
+        {/* ANALYSIS OUTPUT */}
         {analysisResult && (
           <AnalysisResultSection analysisResult={analysisResult} />
         )}
 
-        {!isLoading && (
-          <section className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4 w-full max-w-3xl">
-            <h2 className="text-xl font-bold text-gray-800">
-              Your previous transcriptions
-            </h2>
+        <section className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4 w-full">
+          <h2 className="text-xl font-bold text-gray-800">
+            Your previous transcriptions
+          </h2>
+
+          {isLoading ? (
+            <TranscriptionListSkeleton />
+          ) : (
             <ul className="space-y-4">
               {transcriptions?.map((t) => (
                 <li
@@ -193,8 +205,8 @@ export default function HomePage() {
                 </li>
               ))}
             </ul>
-          </section>
-        )}
+          )}
+        </section>
       </div>
     </main>
   );

@@ -20,6 +20,7 @@ model Analysis {
   transcriptId  String   @unique
   actionItems   Json
   decisions     Json
+  sentiment     String?
   createdAt     DateTime @default(now())
   transcript    Transcript @relation(fields: [transcriptId], references: [id])
 }
