@@ -9,3 +9,9 @@ export type AnalysisResultType = {
   decisions: string[];
   sentiment?: string;
 };
+
+export type TranscriptionType = {
+  createdAt: Date;
+  analysis: AnalysisResultType;
+  text: string;
+};

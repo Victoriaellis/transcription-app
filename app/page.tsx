@@ -7,6 +7,8 @@ import { client } from "@/lib/api-client";
 import { AnalysisResultSection } from "./components/analysis-result-section";
 import { MAX_CHARS } from "./constants";
 import { TranscriptionListSkeleton } from "./components/list-skeleton";
+import { ExistingTranscriptSection } from "./components/existing-transcript-section";
+import { TranscriptNotFound } from "./components/transcript-not-found";
 
 export default function HomePage() {
   const [text, setText] = useState("");
@@ -57,6 +59,10 @@ export default function HomePage() {
     analyseMutation.mutate(text);
   };
 
+  const deselectTranscriptId = () => {
+    setSelectedId(null);
+  };
+
   const analysisResult = analyseMutation.data;
 
   if (selectedId) {
@@ -71,54 +77,14 @@ export default function HomePage() {
     }
 
     if (!selectedTranscript || isTranscriptError) {
-      return (
-        <main className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="text-center space-y-4">
-            <p className="text-red-600 font-semibold text-lg">
-              Transcript not found
-            </p>
-            <button
-              onClick={() => setSelectedId(null)}
-              className="text-blue-600 hover:underline cursor-pointer"
-            >
-              ← Back to all transcripts
-            </button>
-          </div>
-        </main>
-      );
+      return <TranscriptNotFound deselectTranscriptId={deselectTranscriptId} />;
     }
 
     return (
-      <main className="min-h-screen bg-gray-50 p-8 flex justify-center">
-        <div className="w-full max-w-4xl space-y-10">
-          <button
-            onClick={() => setSelectedId(null)}
-            className="text-blue-600 hover:underline flex items-center gap-2 cursor-pointer"
-          >
-            ← Back to all transcripts
-          </button>
-
-          <header className="space-y-1">
-            <h1 className="text-3xl font-bold text-gray-900">
-              Transcript Details
-            </h1>
-            <p className="text-gray-500">
-              {new Date(selectedTranscript.createdAt).toLocaleString()}
-            </p>
-          </header>
-
-          <section className="bg-white p-6 rounded-xl border shadow-sm hover:shadow-md transition">
-            <h3 className="text-lg font-semibold text-gray-800 mb-3">
-              Full Transcript
-            </h3>
-            <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
-              {selectedTranscript.text}
-            </p>
-          </section>
-
-          <AnalysisResultSection analysisResult={selectedTranscript.analysis} />
-        </div>
-      </main>
+      <ExistingTranscriptSection
+        selectedTranscript={selectedTranscript}
+        deselectTranscriptId={deselectTranscriptId}
+      />
     );
   }
 
@@ -178,7 +144,6 @@ export default function HomePage() {
           )}
         </section>
 
-        {/* ANALYSIS OUTPUT */}
         {analysisResult && (
           <AnalysisResultSection analysisResult={analysisResult} />
         )}
