@@ -1,8 +1,8 @@
 # 📊 Meeting Transcript Analysis App
 
-A full-stack Next.js application that processes meeting transcripts and generates AI-powered insights such as action items, decisions, and sentiment analysis.  
-It stores previous transcripts, allows users to revisit results, and provides a clean UI for reviewing analysis outputs.
+A full-stack Next.js application that processes meeting transcripts and generates AI-powered insights such as action items, decisions, and sentiment analysis.
 
+It stores previous transcripts, allows users to revisit results, and provides a clean UI for reviewing analysis outputs.
 
 
 ## 🚀 Features
@@ -24,9 +24,11 @@ It stores previous transcripts, allows users to revisit results, and provides a 
 # 🗄️ Database Structure
 
 The app uses **PostgreSQL** with Prisma.  
+
 There are **two tables**:
 
 ## `Transcription`
+
 Stores each uploaded meeting transcript.
 
 | Field        | Type        | Description                              |
@@ -37,6 +39,7 @@ Stores each uploaded meeting transcript.
 | `analysisId` | String (FK)  | Link to the analysis record               |
 
 ## `Analysis`
+
 Stores the AI-generated results for a transcript.
 
 | Field        | Type             | Description |
