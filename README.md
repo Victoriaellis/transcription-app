@@ -82,11 +82,6 @@ npm run dev
 
 go to: http://localhost:3000
 
-
-# ⏳ If I Had More Time
-
-- Users and authentication
-- testing - unit tests for components, integrations tests for testing API, e2e tests for key flows (generating the analysis, sign in once auth work done etc)
 - Chunk long transcripts into smaller, token-safe segments before sending them to API and caching of LLM responses for cost efficiency
 - Pagination for API to get previous transcripts (I think infinite scroll style best for the UI)
 - Collapsible sections to make the UI clearer
