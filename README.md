@@ -82,7 +82,3 @@ npm run dev
 
 go to: http://localhost:3000
 
-- Chunk long transcripts into smaller, token-safe segments before sending them to API and caching of LLM responses for cost efficiency
-- Pagination for API to get previous transcripts (I think infinite scroll style best for the UI)
-- Collapsible sections to make the UI clearer
-
