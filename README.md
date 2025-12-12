@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📊 Meeting Transcript Analysis App
 
-## Getting Started
+A full-stack Next.js application that processes meeting transcripts and generates AI-powered insights such as action items, decisions, and sentiment analysis.
 
-First, run the development server:
+It stores previous transcripts, allows users to revisit results, and provides a clean UI for reviewing analysis outputs.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+## 🚀 Features
+
+- ✨ Paste meeting notes and analyse them instantly  
+- 🧠 AI-generated:
+  - Action items  
+  - Decisions  
+  - Overall meeting sentiment  
+- 📁 Saves previous transcriptions in database
+- 🔍 View full transcript + AI analysis for each saved entry
+- 🧩 Clean React component structure
+- 💾 Prisma + PostgreSQL backend
+- ⏳ Skeleton loaders and polished UI
+- 📱 Fully responsive
+
+
+
+# 🗄️ Database Structure
+
+The app uses **PostgreSQL** with Prisma.  
+
+There are **two tables**:
+
+## `Transcription`
+
+Stores each uploaded meeting transcript.
+
+| Field        | Type        | Description                              |
+|--------------|-------------|------------------------------------------|
+| `id`         | String (CUID) | Primary key                              |
+| `text`       | String       | Raw meeting transcript                    |
+| `createdAt`  | DateTime     | Timestamp                                 |
+| `analysisId` | String (FK)  | Link to the analysis record               |
+
+## `Analysis`
+
+Stores the AI-generated results for a transcript.
+
+| Field        | Type             | Description |
+|--------------|------------------|-------------|
+| `id`         | String (CUID)    | Primary key |
+| `sentiment`  | String           | Positive / Negative / Neutral |
+| `decisions`  | String[]         | List of decisions |
+| `actionItems`| Json[]           | List of extracted action items |
+
+
+
+# 🛠️ Setup & Installation
+
+1. Clone the repo
+
+2. Install dependecies
+
+```
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. Configure environment variables (will send the values over email)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+DATABASE_URL="...."
+GEMINI_API_KEY="...."
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Set up database
+   
+```
+npx prisma migrate dev
+```
 
-## Learn More
+5. Run the dev server
 
-To learn more about Next.js, take a look at the following resources:
+```
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+go to: http://localhost:3000
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
