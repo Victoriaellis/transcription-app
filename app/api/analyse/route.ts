@@ -1,6 +1,7 @@
 import { MAX_CHARS } from "@/app/constants";
 import { analyseTranscript } from "@/lib/analysis";
 import { prisma } from "@/lib/db";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { NextRequest, NextResponse } from "next/server";
 
 function cleanJsonString(str: string) {
@@ -16,6 +17,17 @@ function errorResponse(message: string, status = 400) {
 
 export async function POST(request: NextRequest) {
   try {
+    const ip =
+      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+      "unknown";
+
+    if (!checkRateLimit(ip, 5)) {
+      return errorResponse(
+        "Demo limit reached. Maximum 5 analyses per hour.",
+        429
+      );
+    }
+
     const { text } = await request.json();
 
     if (!text) return errorResponse("Text is required");
